@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # make exacutable: chmod +x check_solution.sh
 # run: ./check_solution.sh pypy A.py

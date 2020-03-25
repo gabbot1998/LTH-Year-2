@@ -3,8 +3,7 @@ import sys
 # "It ain't pretty, but it works"
 
 def main():
-    file = sys.stdin.read()
-    file = [int(i) for i in file.split()]
+    file = list(map(int,sys.stdin.read().split()))
 
     n = file[0]
     del file[0]
@@ -13,8 +12,7 @@ def main():
     bear = {}
 
     for row in range(2 * n):
-        line = file[:n+1]
-        del file[:n+1]
+        line = file[(n+1) * row:(n + 1) * (row + 1)]
         i = line[0]
         preferences = line[1:]
 
