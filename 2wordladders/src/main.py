@@ -1,4 +1,6 @@
 import sys
+from queue import Queue
+from datetime import datetime
 
 def main():
     file = sys.stdin.read().split()
@@ -7,24 +9,27 @@ def main():
     q = int(file[1])
     words = file[2:n+2]
     queries = file[n+2:]
-    graph = {}
 
-    build_graph(graph,words,n,q)
-    print()
+    graph = build_graph(words,n,q)
+    #print(graph)
+    #print()
     read_queries(graph,queries,n,q)
 
-def build_graph(graph,words,n,q):
+def build_graph(words,n,q):
+    graph = {}
     for word in words:
         # TODO: Load to graph
-        print(word)
-        graph[word] = (False,[])
+        graph[word] = (False, get_edges(words, word))
+    return graph
 
 # Searches for words that conform and returns arcs
 def get_edges(words,word):
     edges = []
     for comp_word in words:
-        if conforms(word, comp_word):
+        if word != comp_word and conforms(word, comp_word):
             edges.append(comp_word)
+
+    return edges
 
 # Checks if comp_word conforms to rule
 def conforms(word, comp_word):
@@ -43,15 +48,54 @@ def conforms(word, comp_word):
             return False
     return True
 
-
-
-
 def read_queries(graph,queries,n,q):
     for i in range(q):
         # TODO: Do something with queries (search!)
         start_word = queries[2*i]
-        end_word = queries[2*i +1]
-        print(start_word + " " + end_word)
+        target_word = queries[2*i +1]
+
+        if start_word == target_word:
+            print(0)
+            continue
+
+        distance = bfs(graph, start_word, target_word)
+        if distance >= 0:
+            print(distance)
+        else:
+            print("Impossible")
+
+
+        #print(start_word + " " + end_word)
+
+def bfs(graph, start_word, target):
+    pred = {}
+    graph_copy = graph.copy()
+
+    queue = Queue()
+    queue.put(start_word)
+
+    while not queue.empty():
+        current_word = queue.get()
+        current_edges = graph_copy[current_word][1]
+
+        for neighbor in current_edges:
+            if not graph_copy[neighbor][0]: #If the neighbor is not visited
+                graph_copy[neighbor] = (True, graph_copy[neighbor][1]) #Set the neighbor as visited
+                queue.put(neighbor)
+                pred[neighbor] = current_word
+                if neighbor == target:
+                    #print(pred)
+                    return get_distance(pred, start_word, target)
+    return -1
+
+def get_distance(pred, start_word, current_word):
+    #print(current_word)
+    if current_word == start_word:
+        return 0
+    else:
+        return 1 + get_distance(pred, start_word, pred[current_word])
+
+
 
 if __name__ == "__main__":
     main()
