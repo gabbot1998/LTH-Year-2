@@ -8,9 +8,10 @@ def main():
     m = file[1]
 
     edges = file[2:]
+    #edges = file
     total_weight = 0
 
-    trees = []
+    trees = set() 
     added_to_trees = set()
     weight_list = []
 
@@ -25,10 +26,10 @@ def main():
         weight = edges[3*i + 2]
         weight_list.append((person1, person2, weight))
         if person1 not in added_to_trees:
-            trees.append({person1})
+            trees.add(frozenset({person1}))
             added_to_trees.add(person1)
         if person2 not in added_to_trees:
-            trees.append({person2})
+            trees.add(frozenset({person2}))
             added_to_trees.add(person2)
     b = datetime.now()
 
@@ -45,25 +46,23 @@ def main():
         person1 = pair[0]
         person2 = pair[1]
         weight = pair[2]
-        tree1, i1 = find_tree_containing(trees, person1)
-        tree2, i2 = find_tree_containing(trees, person2)
+        tree1 = find_tree_containing(trees, person1)
+        tree2 = find_tree_containing(trees, person2)
         #print(tree1)
         #print(tree2)
+        #print(trees)
+        #print("")
 
         if len(trees) == 1:
             break
 
         else:
             if tree1 != tree2:
-                if i1 > i2:
-                    del trees[i1]
-                    del trees[i2]
-                if i2 > i1:
-                    del trees[i2]
-                    del trees[i1]
+                trees.remove(tree1)
+                trees.remove(tree2)
                     
                 total_weight = total_weight + weight
-                trees.append(tree1.union(tree2))
+                trees.add(tree1.union(tree2))
 
     b = datetime.now()
     print("making the spanning tree " + str(b-a))
@@ -71,13 +70,11 @@ def main():
 
 
 def find_tree_containing(trees, person):
-    i = -1
     #print(trees)
     for tree in trees:
-        i = i + 1
         if person in tree:
-            return (tree, i)
-    return ({}, -1)
+            return tree
+    return {}
 
 if __name__ == "__main__":
     main()

@@ -3,17 +3,28 @@ from queue import Queue
 from datetime import datetime
 
 def main():
+    print("Reading input")
+    a = datetime.now()
     file = sys.stdin.read().split()
+    b = datetime.now()
+    print("Read input in " + str(b-a))
 
     n = int(file[0])
     q = int(file[1])
     words = file[2:n+2]
     queries = file[n+2:]
-
+    
+    c = datetime.now()
+    print("Edited list in " + str(c-b))
     graph = build_graph(words,n,q)
+    d = datetime.now()
+    print("Built graph in " + str(d-c))
     #print(graph)
     #print()
     read_queries(graph,queries,n,q)
+
+    e = datetime.now()
+    print("Read queries in " + str(e-d))
 
 def build_graph(words,n,q):
     graph = {}
@@ -26,13 +37,29 @@ def build_graph(words,n,q):
 def get_edges(words,word):
     edges = []
     for comp_word in words:
-        if word != comp_word and conforms(word, comp_word):
+        if word != comp_word and conforms(word[1:], comp_word):
             edges.append(comp_word)
 
     return edges
 
 # Checks if comp_word conforms to rule
 def conforms(word, comp_word):
+    word = sorted(word)
+    comp_word = sorted(comp_word)
+    i = 0
+    j = 0
+    first_err = False
+    while i < 4:
+        if word[i] == comp_word[j]:
+            i += 1
+            j += 1
+        elif not first_err:
+            first_err = True
+            j += 1 # Only comp_word continues
+        else:
+            return False
+    return True
+    """
     word = word[1:] # First char not needed
     comp_word = [c for c in comp_word] # Remake to [chars]
     for c_1 in word:
@@ -47,40 +74,41 @@ def conforms(word, comp_word):
         if len(comp_word) == n_letters:
             return False
     return True
-
+"""
 def read_queries(graph,queries,n,q):
     for i in range(q):
         # TODO: Do something with queries (search!)
         start_word = queries[2*i]
         target_word = queries[2*i +1]
 
-        if start_word == target_word:
-            print(0)
-            continue
+        #if start_word == target_word:
+        #    print(0)
+        #    continue
 
         distance = bfs(graph, start_word, target_word)
-        if distance >= 0:
-            print(distance)
-        else:
-            print("Impossible")
+        #if distance >= 0:
+        #    print(distance)
+        #else:
+        #    print("Impossible")
 
 
         #print(start_word + " " + end_word)
 
 def bfs(graph, start_word, target):
     pred = {}
-    graph_copy = graph.copy()
+    #graph_copy = graph.copy()
+    visited = set()
 
     queue = Queue()
     queue.put(start_word)
 
     while not queue.empty():
         current_word = queue.get()
-        current_edges = graph_copy[current_word][1]
+        current_edges = graph[current_word][1]
 
         for neighbor in current_edges:
-            if not graph_copy[neighbor][0]: #If the neighbor is not visited
-                graph_copy[neighbor] = (True, graph_copy[neighbor][1]) #Set the neighbor as visited
+            if neighbor not in visited: #If the neighbor is not visited
+                visited.add(neighbor)
                 queue.put(neighbor)
                 pred[neighbor] = current_word
                 if neighbor == target:
