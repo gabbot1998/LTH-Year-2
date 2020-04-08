@@ -11,9 +11,10 @@ def main():
     #edges = file
     total_weight = 0
 
-    trees = set() 
-    added_to_trees = set()
+
     weight_list = []
+    parents = {}
+    size = {}
 
 
 
@@ -25,56 +26,80 @@ def main():
         person2 = edges[3*i + 1]
         weight = edges[3*i + 2]
         weight_list.append((person1, person2, weight))
-        if person1 not in added_to_trees:
-            trees.add(frozenset({person1}))
-            added_to_trees.add(person1)
-        if person2 not in added_to_trees:
-            trees.add(frozenset({person2}))
-            added_to_trees.add(person2)
+        if person1 not in parents:
+            makeSet(person1, parents, size)
+        if person2 not in parents:
+            makeSet(person2, parents, size)
     b = datetime.now()
-
-    print("Making the weight list " + str(b-a))
+#    print(parents)
+    #print("Making the weight list " + str(b-a))
 
 
     a = datetime.now()
     weight_list.sort(key = lambda list: list[2])
     b = datetime.now()
-    print("Sorting the weight list " + str(b-a))
+    #print("Sorting the weight list " + str(b-a))
 
     a = datetime.now()
     for pair in weight_list:
+
         person1 = pair[0]
         person2 = pair[1]
         weight = pair[2]
-        tree1 = find_tree_containing(trees, person1)
-        tree2 = find_tree_containing(trees, person2)
-        #print(tree1)
-        #print(tree2)
-        #print(trees)
         #print("")
+        #print(size[person1])
+        #print(size[person2])
+        #print(parents)
+        tree1 = find(person1, parents)
+        tree2 = find(person2, parents)
 
-        if len(trees) == 1:
+        if size[tree1] == n or size[tree2] == n:
+            #print("Size is n")
+            #print(old_weight)
             break
 
-        else:
-            if tree1 != tree2:
-                trees.remove(tree1)
-                trees.remove(tree2)
-                    
-                total_weight = total_weight + weight
-                trees.add(tree1.union(tree2))
+        elif tree1 != tree2:
+            #print("Making the union")
+            #print(person1)
+            #print(person2)
+            #print("total_weight is : ")
+            old_weight = total_weight
+            total_weight = total_weight + weight
+            #print("weight is:")
+            #print(weight)
+            #print(total_weight)
+            union(person1, person2, size, parents)
 
     b = datetime.now()
-    print("making the spanning tree " + str(b-a))
+    #print("making the spanning tree " + str(b-a))
     print(total_weight)
 
 
-def find_tree_containing(trees, person):
-    #print(trees)
-    for tree in trees:
-        if person in tree:
-            return tree
-    return {}
+
+def union(u, v, size, parents):
+    u = find(u, parents)
+    v = find(v, parents)
+    if size[u] > size[v]:
+        parents[v] = u
+        size[u] = size[u] + size[v]
+    elif size[u] < size[v]:
+        parents[u] = v
+        size[v] = size[u] + size[v]
+    elif u != v:
+        parents[v] = u
+        size[u] = size[u] + size[v]
+
+
+def find(node, parents):
+    if parents[node] == node:
+        return node
+    else:
+        parents[node] = find(parents[node], parents)
+        return parents[node]
+
+def makeSet(node, parents, size):
+    parents[node] = node
+    size[node] = 1
 
 if __name__ == "__main__":
     main()
