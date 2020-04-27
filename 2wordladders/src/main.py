@@ -3,11 +3,11 @@ from queue import Queue
 from datetime import datetime
 
 def main():
-    print("Reading input")
+    #print("Reading input")
     a = datetime.now()
     file = sys.stdin.read().split()
     b = datetime.now()
-    print("Read input in " + str(b-a))
+    #print("Read input in " + str(b-a))
 
     n = int(file[0])
     q = int(file[1])
@@ -15,16 +15,16 @@ def main():
     queries = file[n+2:]
     
     c = datetime.now()
-    print("Edited list in " + str(c-b))
+    #print("Edited list in " + str(c-b))
     graph = build_graph(words,n,q)
     d = datetime.now()
-    print("Built graph in " + str(d-c))
+    #print("Built graph in " + str(d-c))
     #print(graph)
     #print()
     read_queries(graph,queries,n,q)
 
     e = datetime.now()
-    print("Read queries in " + str(e-d))
+    #print("Read queries in " + str(e-d))
 
 def build_graph(words,n,q):
     graph = {}
@@ -81,15 +81,15 @@ def read_queries(graph,queries,n,q):
         start_word = queries[2*i]
         target_word = queries[2*i +1]
 
-        #if start_word == target_word:
-        #    print(0)
-        #    continue
+        if start_word == target_word:
+            print(0)
+            continue
 
         distance = bfs(graph, start_word, target_word)
-        #if distance >= 0:
-        #    print(distance)
-        #else:
-        #    print("Impossible")
+        if distance >= 0:
+            print(distance)
+        else:
+            print("Impossible")
 
 
         #print(start_word + " " + end_word)
