@@ -9,7 +9,7 @@ def main():
     p_x = sorted(pairs,key = lambda x : x[0])
     p_y = sorted(pairs,key = lambda x : x[1])
     print(p_x)
-    print(p_y) 
+    print(p_y)
 
     print(bruteforce(p_x, 0, n-1, n))
 
@@ -19,7 +19,7 @@ def main():
 
 
 
-    
+
 def divide_and_conquer(pairs, low, high, n):
     if n <= 3:
         return bruteforce(pairs, low, high, n)
@@ -32,14 +32,14 @@ def bruteforce(pairs, low, high, n):
         for j in range(low,high):
             if i != j:
                 d = distance(pairs[i],pairs[j])
-                print(i,j,pairs[i],pairs[j],d)
+                print(i, j, pairs[i], pairs[j], d)
                 if d < smallest_d and d != 0:
                     smallest_d = d
     return smallest_d
 
 
 def distance(p1,p2):
-    return math.sqrt(abs( (p1[0] - p2[0])^2 + (p1[1] - p2[1])^2 )) # TODO
+    return math.sqrt(abs( math.pow(p1[0] - p2[0], 2) + math.pow(p1[1] - p2[1], 2) )) # TODO
 
 
 def read_input():
