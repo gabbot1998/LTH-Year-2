@@ -8,7 +8,6 @@ def main():
     m = file[1]
 
     edges = file[2:]
-    #edges = file
     total_weight = 0
 
 
@@ -17,8 +16,6 @@ def main():
     size = {}
 
 
-
-    #graph[person] = [(person1, weight1), .. (personn, weightn)]
 
     a = datetime.now()
     for i in range(m):
@@ -31,14 +28,11 @@ def main():
         if person2 not in parents:
             makeSet(person2, parents, size)
     b = datetime.now()
-#    print(parents)
-    #print("Making the weight list " + str(b-a))
 
 
     a = datetime.now()
     weight_list.sort(key = lambda list: list[2])
     b = datetime.now()
-    #print("Sorting the weight list " + str(b-a))
 
     a = datetime.now()
     for pair in weight_list:
@@ -46,32 +40,18 @@ def main():
         person1 = pair[0]
         person2 = pair[1]
         weight = pair[2]
-        #print("")
-        #print(size[person1])
-        #print(size[person2])
-        #print(parents)
         tree1 = find(person1, parents)
         tree2 = find(person2, parents)
 
         if size[tree1] == n or size[tree2] == n:
-            #print("Size is n")
-            #print(old_weight)
             break
 
         elif tree1 != tree2:
-            #print("Making the union")
-            #print(person1)
-            #print(person2)
-            #print("total_weight is : ")
             old_weight = total_weight
             total_weight = total_weight + weight
-            #print("weight is:")
-            #print(weight)
-            #print(total_weight)
             union(person1, person2, size, parents)
 
     b = datetime.now()
-    #print("making the spanning tree " + str(b-a))
     print(total_weight)
 
 
