@@ -11,18 +11,14 @@ def main():
         l_w1 = len(query[0])
         l_w2 = len(query[1])
         longest = max(l_w1, l_w2)
-        # A = [[None for col in range(l_w2+1)] for row in range(l_w1+1)] # One extra char for empty string
-        A = np.empty([l_w1 +1, l_w2+1], dtype=object) ### replaced list with np array for faster insertion
+        A = [[None for col in range(l_w2+1)] for row in range(l_w1+1)] # One extra char for empty string
+        #A = np.empty([l_w1 +1, l_w2+1], dtype=object) ### replaced list with np array for faster insertion
 
         sp, cost = opt(query,l_w1,l_w2,scores,A)
         print(sp[0] + " " + sp[1])
 
 
 def opt(query,i,j,scores,A):
-    #print()
-    # print(i,j)
-    # for line in A:
-    #     print(line)
     if A[i][j] != None: # Use what you already know
         # print("found")
         return A[i][j]
