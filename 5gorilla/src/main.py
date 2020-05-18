@@ -1,6 +1,6 @@
 import sys
 import math
-import numpy as np
+# import numpy as np
 from datetime import datetime
 import sys
 sys.setrecursionlimit(1500)
@@ -11,26 +11,31 @@ def main():
         l_w1 = len(query[0])
         l_w2 = len(query[1])
         longest = max(l_w1, l_w2)
-        A = [[None for col in range(l_w2+1)] for row in range(l_w1+1)] # One extra char for empty string
+        A = [['' for col in range(l_w2+1)] for row in range(l_w1+1)] # One extra char for empty string
+        #print(A)
         #A = np.empty([l_w1 +1, l_w2+1], dtype=object) ### replaced list with np array for faster insertion
 
         sp, cost = opt(query,l_w1,l_w2,scores,A)
-        print(sp[0] + " " + sp[1])
+        print(convert(sp[0]) + " " + convert(sp[1]))
+
+def convert(s):
+    str1 = ""
+    return(str1.join(s))
 
 
 def opt(query,i,j,scores,A):
-    if A[i][j] != None: # Use what you already know
+    if A[i][j] != '': # Use what you already know
         # print("found")
         return A[i][j]
 
     # Check if any is 0
     if i == 0:
         cost = j*scores['space']
-        A[0][j] = (('*'*j,query[1][:j]),cost)
+        A[0][j] = ((['*']*j,list(query[1])[:j]),cost)
         return A[0][j]
     if j == 0:
         cost = i*scores['space']
-        A[i][0] = ((query[0][:i],'*'*i),cost)
+        A[i][0] = ((list(query[0])[:i],['*']*i),cost)
         return A[i][0]
 
     cw1 = query[0][i - 1]
@@ -47,13 +52,13 @@ def opt(query,i,j,scores,A):
     c = scores['space'] + score3
     biggest = max([a, b, c])
     if a == biggest:
-        A[i][j] = ((sp1[0] + query[0][i - 1], sp1[1] + query[1][j - 1]), a)
+        A[i][j] = ((sp1[0] + list(query[0][i - 1]), sp1[1] + list((query[1][j - 1]))), a)
         return A[i][j]
     elif b == biggest:
-        A[i][j] = ((sp2[0] + query[0][i - 1], sp2[1] + '*'), b)
+        A[i][j] = ((sp2[0] + list((query[0][i - 1])), list(sp2[1]) + ['*']), b)
         return A[i][j]
     elif c == biggest:
-        A[i][j] = ((sp3[0] + '*', sp3[1] + query[1][j - 1]), c)
+        A[i][j] = ((sp3[0] + ['*'], sp3[1] + list((query[1][j - 1]))), c)
         return A[i][j]
 
 def read_input():
