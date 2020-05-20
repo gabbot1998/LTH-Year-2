@@ -10,27 +10,20 @@ edge_indices[i] gives edge(u,v) on index i
 """
 
 def main():
-    graph, p_list, edge_indices, target, required_capacity = read_input()
-    graph_original = copy.deepcopy(graph)
-    do_flow(graph, target)
-    #printgraph(graph)
-    #print(get_max_cap(graph))
+    p_list, target, required_capacity = read_input()
     old_max = 0
+    graph = {}
     for i in range(len(p_list)):
-        # TODO Börja med att bygga upp kanter än att ta bort
-        u_rem, v_rem = edge_indices[p_list[i]]
-        del graph_original[u_rem][v_rem]
-        del graph_original[v_rem][u_rem]
-
-        graph = copy.deepcopy(graph_original)
-        #print("\nREMOVAL {}: removing ({} {})".format(i, u_rem, v_rem))
+        u, v, c = p_list[i] # edge to build
+        add_edge(graph, u, v, c)
 
         do_flow(graph, target)
         #printgraph(graph)
 
         max = get_max_cap(graph)
+        print(max)
         #print(max)
-        if max < required_capacity:
+        if max > required_capacity:
             print(i, old_max)
             break
         old_max = max
@@ -47,25 +40,27 @@ def get_max_cap(graph):
         max = max + graph[0][val][1]
     return max
 
+def add_edge(graph,u,v,c):
+    if u not in graph:
+        graph[u] = {}
+    if v not in graph:
+        graph[v] = {}
+    graph[u][v] = (c, 0) # Fill [u][v] with tuple (capacity, flow)
+    graph[v][u] = (c, 0) # bidirectional
+
 def read_input():
     N, M, C, P = list(map(int,sys.stdin.readline().split()))
-    graph = {}
     edge_indices = []
     for i in range(M):
         u, v, c = list(map(int,sys.stdin.readline().split()))
-        if u not in graph:
-            graph[u] = {}
-        if v not in graph:
-            graph[v] = {}
-        graph[u][v] = (c, 0) # Fill [u][v] with tuple (capacity, flow)
-        graph[v][u] = (c, 0) # bidirectional
-        edge_indices.append((u,v))
+        edge_indices.append((u,v,c))
 
     p_list = []
     for i in range(P):
-        p_list.append(list(map(int,sys.stdin.readline().split()))[0])
+        index = list(map(int,sys.stdin.readline().split()))[0]
+        p_list.append(edge_indices[index])
 
-    return graph, p_list, edge_indices, N-1, C
+    return p_list, N-1, C
 
 
 def increase_flow(path, delta, graph, target):
