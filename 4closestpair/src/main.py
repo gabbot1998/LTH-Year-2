@@ -26,7 +26,7 @@ def divide_and_conquer(pairs, low, high):
     #print("low {} high {} points {}".format(low,high,pairs[low:high]))
     midline = ((high - low) // 2) + low
     n = high - low
-    if n < 3:
+    if n <= 3:
         return bruteforce(pairs, low, high)
     else:
         delta = min(divide_and_conquer(pairs, low, midline),
